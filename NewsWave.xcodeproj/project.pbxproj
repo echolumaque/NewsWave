@@ -6,8 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		44C157FC9E5D41EC0DB68D6B /* Pods_NewsWave.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB1D80F2357C35D5F1765858 /* Pods_NewsWave.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		46ACD9D32D81DDA200C83DEB /* NewsWave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewsWave.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F0C882DE55144F19F6433D0 /* Pods-NewsWave.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NewsWave.debug.xcconfig"; path = "Target Support Files/Pods-NewsWave/Pods-NewsWave.debug.xcconfig"; sourceTree = "<group>"; };
+		DB1D80F2357C35D5F1765858 /* Pods_NewsWave.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NewsWave.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E68E68390D01C3434B6A1680 /* Pods-NewsWave.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NewsWave.release.xcconfig"; path = "Target Support Files/Pods-NewsWave/Pods-NewsWave.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,17 +43,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44C157FC9E5D41EC0DB68D6B /* Pods_NewsWave.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		240E3F853CD8DBDAD287D06D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DB1D80F2357C35D5F1765858 /* Pods_NewsWave.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		46ACD9CA2D81DDA200C83DEB = {
 			isa = PBXGroup;
 			children = (
 				46ACD9D52D81DDA200C83DEB /* NewsWave */,
 				46ACD9D42D81DDA200C83DEB /* Products */,
+				7FE8338FFFA952D1EA29978E /* Pods */,
+				240E3F853CD8DBDAD287D06D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,6 +76,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		7FE8338FFFA952D1EA29978E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6F0C882DE55144F19F6433D0 /* Pods-NewsWave.debug.xcconfig */,
+				E68E68390D01C3434B6A1680 /* Pods-NewsWave.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -65,9 +92,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 46ACD9E62D81DDA300C83DEB /* Build configuration list for PBXNativeTarget "NewsWave" */;
 			buildPhases = (
+				2C465BF586EE9B277F27FD8C /* [CP] Check Pods Manifest.lock */,
 				46ACD9CF2D81DDA200C83DEB /* Sources */,
 				46ACD9D02D81DDA200C83DEB /* Frameworks */,
 				46ACD9D12D81DDA200C83DEB /* Resources */,
+				CEA0BF403E47044FA7B98C2A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -77,8 +106,6 @@
 				46ACD9D52D81DDA200C83DEB /* NewsWave */,
 			);
 			name = NewsWave;
-			packageProductDependencies = (
-			);
 			productName = NewsWave;
 			productReference = 46ACD9D32D81DDA200C83DEB /* NewsWave.app */;
 			productType = "com.apple.product-type.application";
@@ -127,6 +154,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2C465BF586EE9B277F27FD8C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-NewsWave-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CEA0BF403E47044FA7B98C2A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NewsWave/Pods-NewsWave-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NewsWave/Pods-NewsWave-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NewsWave/Pods-NewsWave-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		46ACD9CF2D81DDA200C83DEB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -140,6 +209,7 @@
 /* Begin XCBuildConfiguration section */
 		46ACD9E72D81DDA300C83DEB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F0C882DE55144F19F6433D0 /* Pods-NewsWave.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -150,7 +220,6 @@
 				INFOPLIST_FILE = NewsWave/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -168,6 +237,7 @@
 		};
 		46ACD9E82D81DDA300C83DEB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E68E68390D01C3434B6A1680 /* Pods-NewsWave.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -178,7 +248,6 @@
 				INFOPLIST_FILE = NewsWave/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -231,7 +300,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -294,7 +363,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
