@@ -9,10 +9,16 @@ import UIKit
 
 protocol TopHeadlinesViewProtocol: AnyObject, UIViewController {
     var presenter: TopHeadlinesPresenter? { get set }
+    func updateNewsDataSource(articles: [Article])
 }
 
 class TopHeadlinesViewController: UIViewController {
-    private var newsCollectionView: UICollectionView!
+    private lazy var newsCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewLayoutHelper.listLayout(interGroupSpacing: 8)
+    )
+    private var newsDataSource: UICollectionViewDiffableDataSource<Section, Article>!
+    private lazy var newsRefresher = UIRefreshControl()
     
     var presenter: (any TopHeadlinesPresenter)?
     
@@ -29,7 +35,7 @@ class TopHeadlinesViewController: UIViewController {
         configureViewController()
         configureCollectionView()
         
-        Task { [weak self] in await self?.presenter?.viewLoaded() }
+        Task { [weak self] in try? await self?.presenter?.viewLoaded() }
     }
     
     private func configureViewController() {
@@ -39,13 +45,35 @@ class TopHeadlinesViewController: UIViewController {
     }
     
     private func configureCollectionView() {
-        newsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayoutHelper.listLayout(interGroupSpacing: 20))
-        newsCollectionView.backgroundColor = .systemRed
+        newsCollectionView.alwaysBounceVertical = true
+        newsCollectionView.refreshControl = newsRefresher
+        newsRefresher.addTarget(self, action: #selector(didPullToRefreshNews(_:)), for: .valueChanged)
         
         view.addSubview(newsCollectionView)
         newsCollectionView.pinToEdges(of: view)
+        
+        let articleCell = UICollectionView.CellRegistration<ArticleCell, Article> { [weak self] cell, indexPath, article in
+            let totalItems = self?.newsDataSource.snapshot().numberOfItems(inSection: .main) ?? 0
+            cell.set(article: article, isDividerVisible: indexPath.item != totalItems - 1)
+        }
+        newsDataSource = UICollectionViewDiffableDataSource(collectionView: newsCollectionView) { collectionView, indexPath, article in
+            let articleCell = collectionView.dequeueConfiguredReusableCell(using: articleCell, for: indexPath, item: article)
+            return articleCell
+        }
     }
     
+    func updateNewsDataSource(articles: [Article]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Article>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(articles)
+        DispatchQueue.main.async { self.newsDataSource.apply(snapshot, animatingDifferences: true) }
+    }
+    
+    @objc private func didPullToRefreshNews(_ sender: Any) {
+        newsRefresher.beginRefreshing()
+        Task { [weak self] in try? await self?.presenter?.viewLoaded() }
+        newsRefresher.endRefreshing()
+    }
 }
 
 extension TopHeadlinesViewController: TopHeadlinesViewProtocol {

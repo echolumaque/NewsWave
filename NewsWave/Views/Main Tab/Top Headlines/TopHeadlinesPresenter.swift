@@ -5,12 +5,13 @@
 //  Created by Echo Lumaque on 3/13/25.
 //
 
+import Alamofire
 import Foundation
 
 protocol TopHeadlinesPresenter: AnyObject {
     var newsResponse: NewsResponse? { get set }
     var view: TopHeadlinesViewProtocol? { get set }
-    func viewLoaded() async
+    func viewLoaded() async throws(AFError)
 }
 
 class TopHeadlinesPresenterImpl: TopHeadlinesPresenter {
@@ -23,12 +24,9 @@ class TopHeadlinesPresenterImpl: TopHeadlinesPresenter {
         self.networkService = networkService
     }
     
-    func viewLoaded() async {
-        do {
-            let response = try await networkService.getTopHeadlines()
-            print("Response: \(response)")
-        } catch {
-            
-        }
+    func viewLoaded() async throws(AFError) {
+//        let response = try await networkService.getTopHeadlines()
+//        view?.updateNewsDataSource(articles: response.articles)
+        view?.updateNewsDataSource(articles: Array(NewsResponse.test.articles.prefix(5)))
     }
 }

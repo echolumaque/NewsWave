@@ -8,6 +8,7 @@ target 'NewsWave' do
   # Pods for NewsWave
 pod 'Swinject'
 pod 'Alamofire'
+pod 'Kingfisher'
 
 end
 

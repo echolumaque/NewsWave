@@ -12,6 +12,7 @@ class ServicesAssembly: Assembly {
         container.register(JSONDecoder.self) { _ in
             let jsonDecoder = JSONDecoder()
             jsonDecoder.dateDecodingStrategy = .iso8601
+            jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
             
             return jsonDecoder
         }.inObjectScope(.container)

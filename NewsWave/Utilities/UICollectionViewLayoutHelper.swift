@@ -21,12 +21,13 @@ struct UICollectionViewLayoutHelper {
     
     static func listLayout(
         interGroupSpacing: CGFloat,
+        showsSeparators: Bool = false,
         leadingAction: ((IndexPath) -> UISwipeActionsConfiguration)? = nil,
         trailingAction: ((IndexPath) -> UISwipeActionsConfiguration)? = nil
     ) -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
             var listConfig = UICollectionLayoutListConfiguration(appearance: .plain)
-            listConfig.showsSeparators = false
+            listConfig.showsSeparators = showsSeparators
             listConfig.leadingSwipeActionsConfigurationProvider = leadingAction
             listConfig.trailingSwipeActionsConfigurationProvider = trailingAction
             

@@ -20,9 +20,9 @@ class NetworkServiceImpl: NetworkService {
     }
     
     func getTopHeadlines() async throws(AFError) -> NewsResponse {
-        let newsResult = await AF.request(
-            
-        )
+        guard let apiKey: String = try? Configuration.value(for: Configuration.apiKey.rawValue) else { return .empty }
+        
+        let newsResult = await AF.request("https://newsdata.io/api/1/latest?apikey=\(apiKey)&country=ph")
             .serializingDecodable(NewsResponse.self, decoder: decoder).result
         
         switch newsResult {
