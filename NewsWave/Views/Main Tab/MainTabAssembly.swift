@@ -14,7 +14,7 @@ class MainTabAssembly: Assembly {
             view.viewControllers = [
                 view.createTopHeadlinesTab(container: resolver),
                 view.createSearchNewsTab(),
-                view.createBookmarksTab()
+                view.createBookmarksTab(container: resolver)
             ]
             
             return view
@@ -22,15 +22,31 @@ class MainTabAssembly: Assembly {
         
         // MARK: - Top Headlines VC
         container.register(TopHeadlinesViewProtocol.self) { resolver in
-            TopHeadlinesViewController()
+            TopHeadlinesViewController(container: resolver)
         }.initCompleted { resolver, view in
             view.presenter = resolver.resolve(TopHeadlinesPresenter.self)
         }
         
         container.register(TopHeadlinesPresenter.self) { resolver in
-            TopHeadlinesPresenterImpl(networkService: resolver.resolve(NetworkService.self)!)
+            TopHeadlinesPresenterImpl(
+                articleService: resolver.resolve(ArticleService.self)!,
+                networkService: resolver.resolve(NetworkService.self)!
+            )
         }.initCompleted { resolver, presenter in
             presenter.view = resolver.resolve(TopHeadlinesViewProtocol.self)
+        }
+        
+        // MARK: - Bookmarks VC
+        container.register(BookmarksViewProtocol.self) { resolver in
+            BookmarksViewController(container: resolver)
+        }.initCompleted { resolver, view in
+            view.presenter = resolver.resolve(BookmarksPresenter.self)
+        }
+        
+        container.register(BookmarksPresenter.self) { resolver in
+            BookmarksPresenterImpl(articleService: resolver.resolve(ArticleService.self)!)
+        }.initCompleted { resolver, presenter in
+            presenter.view = resolver.resolve(BookmarksViewProtocol.self)
         }
     }
 }

@@ -27,9 +27,10 @@ class MainTabController: UITabBarController {
         return UINavigationController(rootViewController: rootVC)
     }
     
-    func createBookmarksTab() -> UINavigationController {
-        let rootVC = BookmarksViewController()
-        rootVC.tabBarItem = UITabBarItem(title: "Bookmarks", image: UIImage(systemName: "bookmark.fill"), tag: 2)
-        return UINavigationController(rootViewController: rootVC)
+    func createBookmarksTab(container: Resolver) -> UINavigationController {
+        guard let bookmarksVC = container.resolve(BookmarksViewProtocol.self) else { return UINavigationController() }
+        
+        bookmarksVC.tabBarItem = UITabBarItem(title: "Bookmarks", image: UIImage(systemName: "bookmark.fill"), tag: 2)
+        return UINavigationController(rootViewController: bookmarksVC)
     }
 }

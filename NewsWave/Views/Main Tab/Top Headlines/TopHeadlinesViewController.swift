@@ -6,23 +6,27 @@
 //
 
 import UIKit
+import SafariServices
+import Swinject
 
 protocol TopHeadlinesViewProtocol: AnyObject, UIViewController {
     var presenter: TopHeadlinesPresenter? { get set }
-    func updateNewsDataSource(articles: [Article])
+    func updateNewsDataSource(articles: [ArticleResponse])
 }
 
 class TopHeadlinesViewController: UIViewController {
+    private let container: Resolver
     private lazy var newsCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewLayoutHelper.listLayout(interGroupSpacing: 8)
     )
-    private var newsDataSource: UICollectionViewDiffableDataSource<Section, Article>!
+    private var newsDataSource: UICollectionViewDiffableDataSource<Section, ArticleResponse>!
     private lazy var newsRefresher = UIRefreshControl()
     
     var presenter: (any TopHeadlinesPresenter)?
     
-    init() {
+    init(container: Resolver) {
+        self.container = container
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -38,6 +42,10 @@ class TopHeadlinesViewController: UIViewController {
         Task { [weak self] in try? await self?.presenter?.viewLoaded() }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
     private func configureViewController() {
         view.backgroundColor = .systemBackground
         title = "Top Headlines"
@@ -47,23 +55,27 @@ class TopHeadlinesViewController: UIViewController {
     private func configureCollectionView() {
         newsCollectionView.alwaysBounceVertical = true
         newsCollectionView.refreshControl = newsRefresher
+        newsCollectionView.delegate = self
         newsRefresher.addTarget(self, action: #selector(didPullToRefreshNews(_:)), for: .valueChanged)
         
         view.addSubview(newsCollectionView)
         newsCollectionView.pinToEdges(of: view)
         
-        let articleCell = UICollectionView.CellRegistration<ArticleCell, Article> { [weak self] cell, indexPath, article in
-            let totalItems = self?.newsDataSource.snapshot().numberOfItems(inSection: .main) ?? 0
-            cell.set(article: article, isDividerVisible: indexPath.item != totalItems - 1)
+        let headlineCell = UICollectionView.CellRegistration<HeadlineCell, ArticleResponse> { [weak self] cell, indexPath, article in
+            guard let self else { return }
+            
+            let totalItems = newsDataSource.snapshot().numberOfItems(inSection: .main)
+            cell.set(article: article, container: container)
+            cell.divider.isHidden = indexPath.item + 1 == totalItems
         }
         newsDataSource = UICollectionViewDiffableDataSource(collectionView: newsCollectionView) { collectionView, indexPath, article in
-            let articleCell = collectionView.dequeueConfiguredReusableCell(using: articleCell, for: indexPath, item: article)
-            return articleCell
+            let headlineCell = collectionView.dequeueConfiguredReusableCell(using: headlineCell, for: indexPath, item: article)
+            return headlineCell
         }
     }
     
-    func updateNewsDataSource(articles: [Article]) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Article>()
+    func updateNewsDataSource(articles: [ArticleResponse]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, ArticleResponse>()
         snapshot.appendSections([.main])
         snapshot.appendItems(articles)
         DispatchQueue.main.async { self.newsDataSource.apply(snapshot, animatingDifferences: true) }
@@ -77,9 +89,41 @@ class TopHeadlinesViewController: UIViewController {
 }
 
 extension TopHeadlinesViewController: TopHeadlinesViewProtocol {
-    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let presenter,
+              let article = newsDataSource?.snapshot().itemIdentifiers[indexPaths.first?.item ?? 0] else { return nil }
+        
+        return UIContextMenuConfiguration(actionProvider: { suggestedActions in
+            var primaryAction: UIAction
+            
+            let isFavorite = presenter.favoriteArticles.contains(article.computedId)
+            let title = isFavorite ? "Unfavorite" : "Favorite"
+            let icon = isFavorite ? "bookmark.slash.fill" : "bookmark.fill"
+            if isFavorite {
+                primaryAction = UIAction(title: title, image: UIImage(systemName: icon), attributes: .destructive) { _ in
+                    Task { await presenter.saveHeadline(article: article) }
+                }
+            } else {
+                primaryAction = UIAction(title: title, image: UIImage(systemName: icon)) { _ in
+                    Task { await presenter.saveHeadline(article: article) }
+                }
+            }
+            
+            return UIMenu(title: "", children: [primaryAction])
+        })
+    }
+}
+
+extension TopHeadlinesViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let selectedHeadline = newsDataSource?.snapshot().itemIdentifiers[indexPath.item],
+              let articleUrl = URL(string: selectedHeadline.url) else { return }
+        
+        let safariVC = SFSafariViewController(url: articleUrl)
+        present(safariVC, animated: true)
+    }
 }
 
 #Preview {
-    TopHeadlinesViewController()
+    TopHeadlinesViewController(container: Container())
 }
