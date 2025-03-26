@@ -10,7 +10,7 @@ import Foundation
 
 protocol NetworkService {
     func getTopHeadlines() async throws(AFError) -> HeadlineResponse
-    func searchNews(keyword: String) async throws(AFError) -> HeadlineResponse
+    func searchNews(query: String) async throws(AFError) -> HeadlineResponse
     func downloadImage(from urlString: String) async -> UIImage?
 }
 
@@ -52,9 +52,9 @@ actor NetworkServiceImpl: NetworkService {
         }
     }
     
-    func searchNews(keyword: String) async throws(AFError) -> HeadlineResponse {
+    func searchNews(query: String) async throws(AFError) -> HeadlineResponse {
         guard let apiKey: String = try? Configuration.value(for: Configuration.apiKey.rawValue),
-              let keyword = keyword.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return .empty }
+              let keyword = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return .empty }
         
         let newsResult = await AF.request("https://newsapi.org/v2/everything?q=\(keyword)&apiKey=\(apiKey)")
             .serializingDecodable(HeadlineResponse.self, decoder: decoder).result

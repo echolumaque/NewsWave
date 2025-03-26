@@ -13,7 +13,7 @@ class MainTabAssembly: Assembly {
             let view = MainTabController()
             view.viewControllers = [
                 view.createTopHeadlinesTab(container: resolver),
-                view.createSearchNewsTab(),
+                view.createSearchNewsTab(container: resolver),
                 view.createBookmarksTab(container: resolver)
             ]
             
@@ -34,6 +34,22 @@ class MainTabAssembly: Assembly {
             )
         }.initCompleted { resolver, presenter in
             presenter.view = resolver.resolve(TopHeadlinesViewProtocol.self)
+        }
+        
+        // MARK: - Search VC
+        container.register(SearchViewProtocol.self) { resolver in
+            SearchViewController(container: resolver)
+        }.initCompleted { resolver, view in
+            view.presenter = resolver.resolve(SearchPresenter.self)
+        }
+        
+        container.register(SearchPresenter.self) { resolver in
+            SearchPresenterImpl(
+                articleService: resolver.resolve(ArticleService.self)!,
+                networkService: resolver.resolve(NetworkService.self)!
+            )
+        }.initCompleted { resolver, presenter in
+            presenter.view = resolver.resolve(SearchViewProtocol.self)
         }
         
         // MARK: - Bookmarks VC

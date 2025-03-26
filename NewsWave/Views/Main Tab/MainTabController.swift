@@ -21,10 +21,11 @@ class MainTabController: UITabBarController {
         return UINavigationController(rootViewController: topHeadlinesVC)
     }
     
-    func createSearchNewsTab() -> UINavigationController {
-        let rootVC = SearchViewController()
-        rootVC.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 1)
-        return UINavigationController(rootViewController: rootVC)
+    func createSearchNewsTab(container: Resolver) -> UINavigationController {
+        guard let searchVC = container.resolve(SearchViewProtocol.self) else { return UINavigationController() }
+        
+        searchVC.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 1)
+        return UINavigationController(rootViewController: searchVC)
     }
     
     func createBookmarksTab(container: Resolver) -> UINavigationController {

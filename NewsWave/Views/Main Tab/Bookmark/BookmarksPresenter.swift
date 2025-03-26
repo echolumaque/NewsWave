@@ -10,6 +10,7 @@ import Foundation
 protocol BookmarksPresenter: AnyObject {
     var view: BookmarksViewProtocol? { get set }
     func getSavedArticles() async
+    func unsaveArtcle(article: Article) async
 }
 
 class BookmarksPresenterImpl: BookmarksPresenter {
@@ -24,5 +25,9 @@ class BookmarksPresenterImpl: BookmarksPresenter {
     func getSavedArticles() async {
         let savedArticles = await articleService.getFavoriteArticles()
         view?.updateDataSource(articles: savedArticles)
+    }
+    
+    func unsaveArtcle(article: Article) async {
+        _ = await articleService.addOrRemoveFaveHeadline(article: article.toArticleResponse)
     }
 }

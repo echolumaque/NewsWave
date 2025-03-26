@@ -14,7 +14,7 @@ protocol TopHeadlinesViewProtocol: AnyObject, UIViewController {
     func updateNewsDataSource(articles: [ArticleResponse])
 }
 
-class TopHeadlinesViewController: UIViewController {
+class TopHeadlinesViewController: UIViewController, TopHeadlinesViewProtocol {
     private let container: Resolver
     private lazy var newsCollectionView = UICollectionView(
         frame: .zero,
@@ -39,11 +39,12 @@ class TopHeadlinesViewController: UIViewController {
         configureViewController()
         configureCollectionView()
         
-        Task { [weak self] in try? await self?.presenter?.viewLoaded() }
+//        Task { [weak self] in try? await self?.presenter?.viewLoaded() }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        Task { [weak self] in try? await self?.presenter?.viewLoaded() }
     }
     
     private func configureViewController() {
@@ -88,7 +89,15 @@ class TopHeadlinesViewController: UIViewController {
     }
 }
 
-extension TopHeadlinesViewController: TopHeadlinesViewProtocol {
+extension TopHeadlinesViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let selectedHeadline = newsDataSource?.snapshot().itemIdentifiers[indexPath.item],
+              let articleUrl = URL(string: selectedHeadline.url) else { return }
+        
+        let safariVC = SFSafariViewController(url: articleUrl)
+        present(safariVC, animated: true)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
         guard let presenter,
               let article = newsDataSource?.snapshot().itemIdentifiers[indexPaths.first?.item ?? 0] else { return nil }
@@ -111,16 +120,6 @@ extension TopHeadlinesViewController: TopHeadlinesViewProtocol {
             
             return UIMenu(title: "", children: [primaryAction])
         })
-    }
-}
-
-extension TopHeadlinesViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let selectedHeadline = newsDataSource?.snapshot().itemIdentifiers[indexPath.item],
-              let articleUrl = URL(string: selectedHeadline.url) else { return }
-        
-        let safariVC = SFSafariViewController(url: articleUrl)
-        present(safariVC, animated: true)
     }
 }
 

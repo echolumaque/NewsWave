@@ -36,8 +36,23 @@ class BookmarksViewController: UIViewController, BookmarksViewProtocol {
         super.viewDidLoad()
         configureViewController()
         configureCollectionView()
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         Task { [weak self] in await self?.presenter?.getSavedArticles() }
+    }
+    
+    override func updateContentUnavailableConfiguration(using state: UIContentUnavailableConfigurationState) {
+        if savedArticlesDataSource?.snapshot().itemIdentifiers.isEmpty ?? false {
+            var config = UIContentUnavailableConfiguration.empty()
+            config.image = UIImage(systemName: "bookmark.slash.fill")
+            config.text = "No favorite articles"
+            config.secondaryText = "You don't have any favorite articles at the moment. You can add one by long-pressing an article."
+            contentUnavailableConfiguration = config
+        } else {
+            contentUnavailableConfiguration = nil
+        }
     }
     
     private func configureViewController() {
@@ -47,6 +62,7 @@ class BookmarksViewController: UIViewController, BookmarksViewProtocol {
     }
     
     private func configureCollectionView() {
+        savedArticesCollectionView.delegate = self
         view.addSubview(savedArticesCollectionView)
         savedArticesCollectionView.pinToEdges(of: view)
         
@@ -67,6 +83,33 @@ class BookmarksViewController: UIViewController, BookmarksViewProtocol {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Article>()
         snapshot.appendSections([.main])
         snapshot.appendItems(articles)
-        DispatchQueue.main.async { self.savedArticlesDataSource.apply(snapshot, animatingDifferences: true) }
+        DispatchQueue.main.async {
+            self.savedArticlesDataSource.apply(snapshot, animatingDifferences: true)
+            self.setNeedsUpdateContentUnavailableConfiguration()
+        }
+    }
+}
+
+extension BookmarksViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let presenter,
+              let article = savedArticlesDataSource?.snapshot().itemIdentifiers[indexPaths.first?.item ?? 0] else { return nil }
+        
+        return UIContextMenuConfiguration(actionProvider: { suggestedActions in
+            let primaryAction = UIAction(title: "Unfavorite", image: UIImage(systemName: "bookmark.slash.fill"), attributes: .destructive) { [weak self] _ in
+                guard let self else { return }
+                
+                var snapshot = savedArticlesDataSource.snapshot()
+                snapshot.deleteItems([article])
+                DispatchQueue.main.async {
+                    self.savedArticlesDataSource.apply(snapshot, animatingDifferences: true)
+                    self.setNeedsUpdateContentUnavailableConfiguration()
+                }
+                
+                Task { await presenter.unsaveArtcle(article: article) }
+            }
+            
+            return UIMenu(title: "", children: [primaryAction])
+        })
     }
 }

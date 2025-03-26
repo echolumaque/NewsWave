@@ -15,6 +15,7 @@ class Article {
     var author: String?
     var title: String
     var headlineDescription: String
+    var sourceName: String
     var url: String
     var urlToImage: String
     var publishedAt: String
@@ -24,6 +25,7 @@ class Article {
         author: String? = nil,
         title: String,
         headlineDescription: String,
+        sourceName: String,
         url: String,
         urlToImage: String,
         publishedAt: String,
@@ -33,6 +35,7 @@ class Article {
         self.author = author
         self.title = title
         self.headlineDescription = headlineDescription
+        self.sourceName = sourceName
         self.url = url
         self.urlToImage = urlToImage
         self.publishedAt = publishedAt
@@ -48,7 +51,7 @@ class Article {
 extension Article {
     var toArticleResponse: ArticleResponse {
         ArticleResponse(
-            source: Source(id: "", name: ""),
+            source: Source(id: "", name: sourceName),
             author: author,
             title: title,
             description: headlineDescription,

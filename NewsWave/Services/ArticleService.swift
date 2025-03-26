@@ -32,7 +32,7 @@ actor ArticleService {
     
     func addOrRemoveFaveHeadline(article: ArticleResponse) -> Bool {
         do {
-            let articlePredicate = #Predicate<Article> { $0.title == article.title }
+            let articlePredicate = #Predicate<Article> { $0.articleHash == article.computedId }
             var fetchDescriptor = FetchDescriptor<Article>(predicate: articlePredicate)
             fetchDescriptor.fetchLimit = 1
             let isExisting = try modelContext.fetchCount(fetchDescriptor) > 0
@@ -43,8 +43,10 @@ actor ArticleService {
                 isAddedToFavorites = false
             } else {
                 let newArticle = Article(
+                    author: article.author,
                     title: article.title,
                     headlineDescription: article.description,
+                    sourceName: article.source.name,
                     url: article.url,
                     urlToImage: article.urlToImage,
                     publishedAt: article.publishedAt,
