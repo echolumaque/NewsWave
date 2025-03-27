@@ -1,5 +1,5 @@
 //
-//  HeadlineCell.swift
+//  ArticleCell.swift
 //  NewsWave
 //
 //  Created by Echo Lumaque on 3/13/25.
@@ -9,11 +9,11 @@ import Kingfisher
 import UIKit
 import Swinject
 
-class HeadlineCell: UICollectionViewCell {
+class ArticleCell: UICollectionViewCell {
     private let horizontalPadding: CGFloat = 20
     private let verticalPadding: CGFloat = 12
     
-    private lazy var articleImage = UIImageView()
+    private lazy var articleImage = UIImageView(image: UIImage(systemName: "newspaper.fill"))
     private lazy var sourceLabel = DynamicLabel(
         textColor: .secondaryLabel,
         font: UIFont.preferredFont(for: .callout, weight: .regular)
@@ -60,13 +60,18 @@ class HeadlineCell: UICollectionViewCell {
     func set(article: ArticleResponse, container: Resolver) {
         Task { [weak self] in
             guard let self else { return }
-            let cachedImage = await container.resolve(NetworkService.self)?.downloadImage(from: article.urlToImage)
+            guard let image = article.urlToImage,
+                  let cachedImage = await container.resolve(NetworkService.self)?.downloadImage(from: image) else {
+                articleImage.tintColor = .systemPurple
+                return
+            }
+            
             articleImage.image = cachedImage
         }
         sourceLabel.text = article.source.name.capitalized
         titleLabel.text = article.title
         descriptionLabel.text = article.description
-        authorNameLabel.text = article.author == nil ? "Unknown Author" : "Author: \(article.author ?? "")"
+        authorNameLabel.text = article.author == nil ? "Unknown Author" : article.author!
         
         let publishedDateFormatter = Date.getFormatter(dateFormat: "yyyy-MM-dd'T'HH:mm:ssZZZZZ")
         let dirtyPubDate = publishedDateFormatter.date(from: article.publishedAt) ?? .now
@@ -151,7 +156,7 @@ class HeadlineCell: UICollectionViewCell {
 }
 
 #Preview {
-    let cell = HeadlineCell()
+    let cell = ArticleCell()
     cell.set(article: HeadlineResponse.test.articles[5], container: Container())
     
     return cell

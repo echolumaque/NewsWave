@@ -30,7 +30,7 @@ actor ArticleService {
         }
     }
     
-    func addOrRemoveFaveHeadline(article: ArticleResponse) -> Bool {
+    func addOrRemoveFavorite(article: ArticleResponse) -> Bool {
         do {
             let articlePredicate = #Predicate<Article> { $0.articleHash == article.computedId }
             var fetchDescriptor = FetchDescriptor<Article>(predicate: articlePredicate)
@@ -45,12 +45,12 @@ actor ArticleService {
                 let newArticle = Article(
                     author: article.author,
                     title: article.title,
-                    headlineDescription: article.description,
+                    articleDescription: article.description ?? "",
                     sourceName: article.source.name,
                     url: article.url,
-                    urlToImage: article.urlToImage,
+                    urlToImage: article.urlToImage ?? "",
                     publishedAt: article.publishedAt,
-                    content: article.content
+                    content: article.content ?? ""
                 )
                 modelContext.insert(newArticle)
                 isAddedToFavorites = true

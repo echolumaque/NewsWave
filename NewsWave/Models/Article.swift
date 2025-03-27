@@ -14,7 +14,7 @@ class Article {
     var articleHash: String
     var author: String?
     var title: String
-    var headlineDescription: String
+    var articleDescription: String
     var sourceName: String
     var url: String
     var urlToImage: String
@@ -24,17 +24,17 @@ class Article {
     init(
         author: String? = nil,
         title: String,
-        headlineDescription: String,
+        articleDescription: String,
         sourceName: String,
         url: String,
         urlToImage: String,
         publishedAt: String,
         content: String
     ) {
-        self.articleHash = "\(title) \(headlineDescription)".sha256
+        self.articleHash = "\(title) \(articleDescription)".sha256
         self.author = author
         self.title = title
-        self.headlineDescription = headlineDescription
+        self.articleDescription = articleDescription
         self.sourceName = sourceName
         self.url = url
         self.urlToImage = urlToImage
@@ -54,7 +54,7 @@ extension Article {
             source: Source(id: "", name: sourceName),
             author: author,
             title: title,
-            description: headlineDescription,
+            description: articleDescription,
             url: url,
             urlToImage: urlToImage,
             publishedAt: publishedAt,

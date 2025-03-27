@@ -28,6 +28,6 @@ class BookmarksPresenterImpl: BookmarksPresenter {
     }
     
     func unsaveArtcle(article: Article) async {
-        _ = await articleService.addOrRemoveFaveHeadline(article: article.toArticleResponse)
+        _ = await articleService.addOrRemoveFavorite(article: article.toArticleResponse)
     }
 }

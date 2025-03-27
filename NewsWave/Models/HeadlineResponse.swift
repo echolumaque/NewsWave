@@ -14,13 +14,14 @@ struct HeadlineResponse: Codable, Equatable, Hashable {
 struct ArticleResponse: Codable, Equatable, Hashable {
     let source: Source
     let author: String?
-    let title, description: String
+    let title: String
+    let description: String?
     let url: String
-    let urlToImage: String
+    let urlToImage: String?
     let publishedAt: String
-    let content: String
+    let content: String?
     
-    var computedId: String { "\(title) \(description)".sha256 }
+    var computedId: String { "\(title) \(description ?? "empty")".sha256 }
 }
 
 struct Source: Codable, Equatable, Hashable {

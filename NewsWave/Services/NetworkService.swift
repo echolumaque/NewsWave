@@ -9,8 +9,8 @@ import Alamofire
 import Foundation
 
 protocol NetworkService {
-    func getTopHeadlines() async throws(AFError) -> HeadlineResponse
-    func searchNews(query: String) async throws(AFError) -> HeadlineResponse
+    func getTopArticles() async throws(AFError) -> HeadlineResponse
+    func searchArticles(query: String) async throws(AFError) -> HeadlineResponse
     func downloadImage(from urlString: String) async -> UIImage?
 }
 
@@ -40,7 +40,7 @@ actor NetworkServiceImpl: NetworkService {
         }
     }
     
-    func getTopHeadlines() async throws(AFError) -> HeadlineResponse {
+    func getTopArticles() async throws(AFError) -> HeadlineResponse {
         guard let apiKey: String = try? Configuration.value(for: Configuration.apiKey.rawValue) else { return .empty }
         
 //        let isoCountryCode = (Locale.autoupdatingCurrent.region?.identifier ?? "us").lowercased()
@@ -48,11 +48,13 @@ actor NetworkServiceImpl: NetworkService {
             .serializingDecodable(HeadlineResponse.self, decoder: decoder).result
         switch newsResult {
         case .success(let articleResponse): return articleResponse
-        case .failure(let failure): throw failure
+        case .failure(let failure):
+            print(failure)
+            throw failure
         }
     }
     
-    func searchNews(query: String) async throws(AFError) -> HeadlineResponse {
+    func searchArticles(query: String) async throws(AFError) -> HeadlineResponse {
         guard let apiKey: String = try? Configuration.value(for: Configuration.apiKey.rawValue),
               let keyword = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return .empty }
         

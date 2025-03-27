@@ -62,7 +62,7 @@ class TopHeadlinesViewController: UIViewController, TopHeadlinesViewProtocol {
         view.addSubview(newsCollectionView)
         newsCollectionView.pinToEdges(of: view)
         
-        let headlineCell = UICollectionView.CellRegistration<HeadlineCell, ArticleResponse> { [weak self] cell, indexPath, article in
+        let articleCell = UICollectionView.CellRegistration<ArticleCell, ArticleResponse> { [weak self] cell, indexPath, article in
             guard let self else { return }
             
             let totalItems = newsDataSource.snapshot().numberOfItems(inSection: .main)
@@ -70,7 +70,7 @@ class TopHeadlinesViewController: UIViewController, TopHeadlinesViewProtocol {
             cell.divider.isHidden = indexPath.item + 1 == totalItems
         }
         newsDataSource = UICollectionViewDiffableDataSource(collectionView: newsCollectionView) { collectionView, indexPath, article in
-            let headlineCell = collectionView.dequeueConfiguredReusableCell(using: headlineCell, for: indexPath, item: article)
+            let headlineCell = collectionView.dequeueConfiguredReusableCell(using: articleCell, for: indexPath, item: article)
             return headlineCell
         }
     }

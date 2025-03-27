@@ -5,6 +5,7 @@
 //  Created by Echo Lumaque on 3/13/25.
 //
 
+import SafariServices
 import Swinject
 import UIKit
 
@@ -66,7 +67,7 @@ class BookmarksViewController: UIViewController, BookmarksViewProtocol {
         view.addSubview(savedArticesCollectionView)
         savedArticesCollectionView.pinToEdges(of: view)
         
-        let articleCell = UICollectionView.CellRegistration<HeadlineCell, Article> { [weak self] cell, indexPath, article in
+        let articleCell = UICollectionView.CellRegistration<ArticleCell, Article> { [weak self] cell, indexPath, article in
             guard let self else { return }
             
             let totalItems = savedArticlesDataSource.snapshot().numberOfItems(inSection: .main)
@@ -91,6 +92,15 @@ class BookmarksViewController: UIViewController, BookmarksViewProtocol {
 }
 
 extension BookmarksViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let dataSourceItems = savedArticlesDataSource?.snapshot().itemIdentifiers,
+              !dataSourceItems.isEmpty,
+              let selectedArticleUrl = URL(string: dataSourceItems[indexPath.item].url) else { return }
+        
+        let safariVC = SFSafariViewController(url: selectedArticleUrl)
+        present(safariVC, animated: true)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
         guard let presenter,
               let article = savedArticlesDataSource?.snapshot().itemIdentifiers[indexPaths.first?.item ?? 0] else { return nil }

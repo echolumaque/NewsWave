@@ -29,16 +29,15 @@ class TopHeadlinesPresenterImpl: TopHeadlinesPresenter {
     }
     
     func viewLoaded() async throws(AFError) {
-//        let response = try await networkService.getTopHeadlines()
-//        view?.updateNewsDataSource(articles: response.articles)
-//        print(response)
+        let response = try await networkService.getTopArticles()
+        view?.updateNewsDataSource(articles: response.articles)
         
-        view?.updateNewsDataSource(articles: HeadlineResponse.keywordTest.articles)
+//        view?.updateNewsDataSource(articles: HeadlineResponse.keywordTest.articles)
         self.favoriteArticles = await articleService.getCachedFavoriteArticles()
     }
     
     func saveHeadline(article: ArticleResponse) async {
-        let isAddedToFavorites = await articleService.addOrRemoveFaveHeadline(article: article)
+        let isAddedToFavorites = await articleService.addOrRemoveFavorite(article: article)
         if isAddedToFavorites { favoriteArticles.insert(article.computedId) }
         else { favoriteArticles.remove(article.computedId) }
     }
