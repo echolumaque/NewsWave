@@ -21,6 +21,7 @@
 		46ACD9E52D81DDA300C83DEB /* Exceptions for "NewsWave" folder in "NewsWave" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Config.xcconfig,
 				Info.plist,
 			);
 			target = 46ACD9D22D81DDA200C83DEB /* NewsWave */;
